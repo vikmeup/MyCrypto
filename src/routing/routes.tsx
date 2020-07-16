@@ -92,6 +92,7 @@ const BuyAssets = lazy(() =>
 const EnsDashboard = lazy(() =>
   import(/* webpackChunkName: "EnsDashboard" */ '@features/Ens/EnsDashboard')
 );
+const Faucet = lazy(() => import(/* webpackChunkName: "Faucet" */ '@features/Faucet/Faucet'));
 
 export interface IAppRoutes {
   [K: string]: IAppRoute;
@@ -322,6 +323,15 @@ export const STATIC_APP_ROUTES: IAppRoute[] = [
     requireAccounts: true,
     enabled: IS_ACTIVE_FEATURE.ENS,
     component: EnsDashboard
+  },
+  {
+    name: ROUTE_PATHS.FAUCET.name,
+    title: ROUTE_PATHS.FAUCET.title,
+    path: ROUTE_PATHS.FAUCET.path,
+    exact: true,
+    requireAccounts: true,
+    enabled: IS_ACTIVE_FEATURE.FAUCET,
+    component: Faucet
   }
 ];
 

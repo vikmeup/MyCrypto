@@ -78,6 +78,11 @@ export const links = [
         to: APP_ROUTES_OBJECT.ENS.path,
         enabled: APP_ROUTES_OBJECT.ENS.enabled,
         title: 'ENS'
+      },
+      {
+        to: APP_ROUTES_OBJECT.FAUCET.path,
+        enabled: APP_ROUTES_OBJECT.FAUCET.enabled,
+        title: 'Faucet'
       }
     ]
   },

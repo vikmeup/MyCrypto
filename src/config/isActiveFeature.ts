@@ -21,7 +21,8 @@ export enum FEATURE_LIST {
   DEFIZAP = 'DEFIZAP',
   MYC_MEMBERSHIP = 'MYC_MEMBERSHIP',
   PROTECT_TX = 'PROTECT_TX',
-  ENS = 'ENS'
+  ENS = 'ENS',
+  FAUCET = 'FAUCET'
 }
 
 export type IIS_ACTIVE_FEATURE = {
@@ -49,5 +50,6 @@ export const IS_ACTIVE_FEATURE: IIS_ACTIVE_FEATURE = {
   DEFIZAP: true,
   MYC_MEMBERSHIP: IS_DEV,
   PROTECT_TX: IS_DEV,
-  ENS: true
+  ENS: true,
+  FAUCET: IS_DEV
 };
