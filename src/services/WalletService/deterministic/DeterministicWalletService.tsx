@@ -10,10 +10,14 @@ import {
 } from '@services/Store/BalanceService';
 import { bigify } from '@utils';
 
+import { LedgerUSB, Wallet, getDeterministicWallets } from '..';
 import { LedgerU2F, Trezor, MnemonicPhrase, WalletResult } from '../wallets';
 import { KeyInfo } from '../wallets/HardwareWallet';
-import { LedgerUSB, Wallet, getDeterministicWallets } from '..';
 import { IDeterministicWalletService, DWAccountDisplay, ExtendedDPath } from './types';
+
+interface IPrefetchBundle {
+  [key: string]: KeyInfo;
+}
 
 interface EventHandlers {
   handleInit(session: Wallet, asset: ExtendedAsset): void;
@@ -73,10 +77,6 @@ export const DeterministicWalletService = ({
     handleComplete();
   };
 
-  interface IPrefetchBundle {
-    [key: string]: KeyInfo;
-  }
-
   const getAccounts = async (session: Wallet, dpaths: ExtendedDPath[]) => {
     if (session.prefetch) {
       const prefetchedBundle: IPrefetchBundle = await session.prefetch(dpaths);
@@ -104,21 +104,25 @@ export const DeterministicWalletService = ({
     } else {
       const hardenedDPaths = dpaths.filter(({ isHardened }) => isHardened);
       const normalDPaths = dpaths.filter(({ isHardened }) => !isHardened);
-      await getNormalDPathAddresses(session, normalDPaths)
-        .then((accounts) => {
-          handleEnqueueAccounts(accounts);
-        })
-        .catch((err) => {
-          handleAccountsError(err);
-        });
+      if (normalDPaths.length > 0) {
+        await getNormalDPathAddresses(session, normalDPaths)
+          .then((accounts) => {
+            handleEnqueueAccounts(accounts);
+          })
+          .catch((err) => {
+            handleAccountsError(err);
+          });
+      }
 
-      await getHardenedDPathAddresses(session, hardenedDPaths)
-        .then((accounts) => {
-          handleEnqueueAccounts(accounts);
-        })
-        .catch((err) => {
-          handleAccountsError(err);
-        });
+      if (hardenedDPaths.length > 0) {
+        await getHardenedDPathAddresses(session, hardenedDPaths)
+          .then((accounts) => {
+            handleEnqueueAccounts(accounts);
+          })
+          .catch((err) => {
+            handleAccountsError(err);
+          });
+      }
     }
   };
 
@@ -170,6 +174,7 @@ export const DeterministicWalletService = ({
         //
       }
     }
+
     return outputAddresses;
   };
 
@@ -180,19 +185,19 @@ export const DeterministicWalletService = ({
     const outputAddresses: any[] = [];
     for (const dpath of dpaths) {
       for (let idx = 0; idx < dpath.numOfAddresses; idx++) {
-        await session.getAddress(dpath, idx + dpath.offset).then((data: WalletResult) => {
-          // @todo - fix this type
-          const outputObject = {
-            address: data.address as TAddress,
-            pathItem: {
-              path: data.path,
-              baseDPath: dpath,
-              index: idx + dpath.offset
-            },
-            balance: undefined
-          };
-          outputAddresses.push(outputObject);
-        });
+        const data = (await session.getAddress(dpath, idx + dpath.offset)) as WalletResult;
+
+        // @todo - fix this type
+        const outputObject = {
+          address: data.address as TAddress,
+          pathItem: {
+            path: data.path,
+            baseDPath: dpath,
+            index: idx + dpath.offset
+          },
+          balance: undefined
+        };
+        outputAddresses.push(outputObject);
       }
     }
     return outputAddresses;
