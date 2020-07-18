@@ -23,7 +23,14 @@ import {
   IPendingTxReceipt,
   ITxHistoryStatus
 } from '@types';
-import { Amount, TimeElapsedCounter, AssetIcon, LinkOut, PoweredByText } from '@components';
+import {
+  Amount,
+  TimeElapsedCounter,
+  AssetIcon,
+  LinkOut,
+  PoweredByText,
+  NewTabLink
+} from '@components';
 import { AddressBookContext, AccountContext, StoreContext, SettingsContext } from '@services/Store';
 import { RatesContext } from '@services/RatesProvider';
 import {
@@ -31,7 +38,7 @@ import {
   getTimestampFromBlockNum,
   getTransactionReceiptFromHash
 } from '@services/EthService';
-import { ROUTE_PATHS } from '@config';
+import { ROUTE_PATHS, FAUCET_ADDRESS } from '@config';
 import { SwapDisplayData } from '@features/SwapAssets/types';
 import translate, { translateRaw } from '@translations';
 import { convertToFiat, truncate } from '@utils';
@@ -51,6 +58,7 @@ import TxIntermediaryDisplay from './displays/TxIntermediaryDisplay';
 import { PendingTransaction } from './PendingLoader';
 
 import sentIcon from '@assets/images/icn-sent.svg';
+import receiveIcon from '@assets/images/icn-receive.svg';
 import zapperLogo from '@assets/images/defizap/zapperLogo.svg';
 import './TxReceipt.scss';
 
@@ -170,6 +178,7 @@ export default function TxReceipt({
       settings={settings}
       txConfig={txConfig}
       txReceipt={txReceipt}
+      txType={txReceipt.txType}
       assetRate={assetRate}
       zapSelected={zapSelected}
       membershipSelected={membershipSelected}
@@ -292,12 +301,26 @@ export const TxReceiptUI = ({
           <MembershipReceiptBanner membershipSelected={membershipSelected} />
         </div>
       )}
-      {txType !== ITxType.PURCHASE_MEMBERSHIP && (
+      {txType !== ITxType.PURCHASE_MEMBERSHIP && txType !== ITxType.FAUCET && (
         <>
           <FromToAccount
             from={{
               address: (sender.address || (displayTxReceipt && displayTxReceipt.from)) as TAddress,
               label: senderAccountLabel
+            }}
+            to={{
+              address: (receiverAddress || (displayTxReceipt && displayTxReceipt.to)) as TAddress,
+              label: recipientLabel
+            }}
+          />
+        </>
+      )}
+      {txType === ITxType.FAUCET && (
+        <>
+          <FromToAccount
+            from={{
+              address: FAUCET_ADDRESS as TAddress,
+              label: 'MyCrypto Faucet'
             }}
             to={{
               address: (receiverAddress || (displayTxReceipt && displayTxReceipt.to)) as TAddress,
@@ -342,8 +365,17 @@ export const TxReceiptUI = ({
       {txType !== ITxType.SWAP && (
         <div className="TransactionReceipt-row">
           <div className="TransactionReceipt-row-column">
-            <img src={sentIcon} alt="Sent" />
-            {translate('CONFIRM_TX_SENT')}
+            {txType === ITxType.FAUCET ? (
+              <>
+                <img src={receiveIcon} alt="Received" />
+                {translate('CONFIRM_TX_RECEIVED')}
+              </>
+            ) : (
+              <>
+                <img src={sentIcon} alt="Sent" />
+                {translate('CONFIRM_TX_SENT')}
+              </>
+            )}
           </div>
           <div className="TransactionReceipt-row-column rightAligned">
             <AssetIcon uuid={asset.uuid} size={'24px'} />
@@ -404,16 +436,18 @@ export const TxReceiptUI = ({
 
         {protectTxButton && protectTxButton()}
 
-        <TransactionDetailsDisplay
-          baseAsset={baseAsset}
-          asset={asset}
-          data={data}
-          sender={sender}
-          gasLimit={gasLimit}
-          gasPrice={gasPrice}
-          nonce={nonce}
-          rawTransaction={txConfig.rawTransaction}
-        />
+        {txType !== ITxType.FAUCET && (
+          <TransactionDetailsDisplay
+            baseAsset={baseAsset}
+            asset={asset}
+            data={data}
+            sender={sender}
+            gasLimit={gasLimit}
+            gasPrice={gasPrice}
+            nonce={nonce}
+            rawTransaction={txConfig.rawTransaction}
+          />
+        )}
       </div>
       {shouldRenderPendingBtn && (
         <Button
@@ -423,6 +457,18 @@ export const TxReceiptUI = ({
         >
           {pendingButton!.text}
         </Button>
+      )}
+      {txType === ITxType.FAUCET && (
+        <NewTabLink
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            translateRaw('FAUCET_TWEET')
+          )}`}
+        >
+          <Button secondary={true} className="TransactionReceipt-tweet">
+            <i className="sm-icon sm-logo-twitter TransactionReceipt-tweet-icon" />{' '}
+            <span className="TransactionReceipt-tweet-text">{translate('FAUCET_SHARE')}</span>
+          </Button>
+        </NewTabLink>
       )}
       {completeButtonText && !shouldRenderPendingBtn && (
         <Button secondary={true} className="TransactionReceipt-another" onClick={resetFlow}>

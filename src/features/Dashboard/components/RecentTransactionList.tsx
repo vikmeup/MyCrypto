@@ -28,6 +28,7 @@ import {
 } from '@services/Store/helpers';
 import { COLORS } from '@theme';
 import { getFiat } from '@config/fiats';
+import { FAUCET_ADDRESS } from '@config/constants';
 
 import NoTransactions from './NoTransactions';
 import TransactionLabel from './TransactionLabel';
@@ -113,6 +114,13 @@ const TxTypeConfig: ITxTypeConfig = {
   [ITxHistoryType.DEPLOY_CONTRACT]: {
     label: (_: Asset) => translateRaw('RECENT_TX_LIST_LABEL_CONTRACT_DEPLOY'),
     icon: contractDeploy
+  },
+  [ITxHistoryType.FAUCET]: {
+    label: (asset: Asset) =>
+      translateRaw('RECENT_TX_LIST_LABEL_RECEIVED', {
+        $ticker: asset.ticker || translateRaw('UNKNOWN')
+      }),
+    icon: inbound
   }
 };
 
@@ -177,7 +185,12 @@ export default function RecentTransactionList({ accountsList, className = '' }: 
       timestamp: tx.timestamp || 0,
       txType: deriveTxType(accountsList, tx) || ITxHistoryType.UNKNOWN,
       toLabel: toAddressBookEntry ? toAddressBookEntry.label : noLabel,
-      fromLabel: fromAddressBookEntry ? fromAddressBookEntry.label : noLabel,
+      fromLabel:
+        tx.from === FAUCET_ADDRESS
+          ? 'MyCrypto Faucet'
+          : fromAddressBookEntry
+          ? fromAddressBookEntry.label
+          : noLabel,
       network
     };
   });

@@ -52,19 +52,19 @@ const TimeElapsedCounter = ({ timestamp, isSeconds }: Props) => {
       {elapsedTime.days !== 0 &&
         (elapsedTime.days === 1
           ? translateRaw('ELAPSED_TIME_DAY', { $value: elapsedTime.days.toString() })
-          : translateRaw('ELAPSED_TIME_DAYS', { $value: elapsedTime.days.toString() }))}
+          : translateRaw('ELAPSED_TIME_DAYS', { $value: elapsedTime.days.toString() })) + ' '}
       {elapsedTime.hours !== 0 &&
         (elapsedTime.hours === 1
           ? translateRaw('ELAPSED_TIME_HOUR', { $value: elapsedTime.hours.toString() })
-          : translateRaw('ELAPSED_TIME_HOURS', { $value: elapsedTime.hours.toString() }))}
+          : translateRaw('ELAPSED_TIME_HOURS', { $value: elapsedTime.hours.toString() })) + ' '}
       {elapsedTime.minutes !== 0 &&
         (elapsedTime.minutes === 1
           ? translateRaw('ELAPSED_TIME_MINUTE', { $value: elapsedTime.minutes.toString() })
-          : translateRaw('ELAPSED_TIME_MINUTES', { $value: elapsedTime.minutes.toString() }))}
+          : translateRaw('ELAPSED_TIME_MINUTES', { $value: elapsedTime.minutes.toString() })) + ' '}
       {elapsedTime.seconds !== 0 &&
         (elapsedTime.seconds === 1
           ? translateRaw('ELAPSED_TIME_SECOND', { $value: elapsedTime.seconds.toString() })
-          : translateRaw('ELAPSED_TIME_SECONDS', { $value: elapsedTime.seconds.toString() }))}
+          : translateRaw('ELAPSED_TIME_SECONDS', { $value: elapsedTime.seconds.toString() })) + ' '}
       {translateRaw('ELAPSED_TIME_AGO')}
     </>
   );
