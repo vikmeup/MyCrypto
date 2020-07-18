@@ -50,8 +50,9 @@ export const ETH_SCAN_BATCH_SIZE = 300;
 export const DEFAULT_NUM_OF_ACCOUNTS_TO_SCAN = 5;
 export const DEFAULT_GAP_TO_SCAN_FOR = 5;
 
+export const SETTINGS_FILENAME = 'MyCrypto_Settings_File';
+
 // Faucet constants
 
 export const FAUCET_API = 'https://d3a0rurg7bu691.cloudfront.net';
-
 export const FAUCET_ADDRESS = '0xa500B2427458D12Ef70dd7b1E031ef99d1cc09f7';

@@ -3,6 +3,7 @@ import { ValuesType, Overwrite } from 'utility-types';
 import { TAction } from '@types';
 
 import { DeterministicWalletState, TDWActionError } from './types';
+import { isSameAddress } from '@utils';
 
 export enum DWActionTypes {
   CONNECTION_REQUEST = 'CONNECTION_REQUEST',
@@ -15,7 +16,9 @@ export enum DWActionTypes {
   ENQUEUE_ADDRESSES = 'ENQUEUE_ADDRESSES',
   UPDATE_ASSET = 'UPDATE_ASSET',
   RELOAD_QUEUES = 'RELOAD_QUEUES',
-  TRIGGER_COMPLETE = 'TRIGGER_COMPLETE'
+  TRIGGER_COMPLETE = 'TRIGGER_COMPLETE',
+  ADD_CUSTOM_DPATHS = 'ADD_CUSTOM_DPATHS',
+  DESIGNATE_FRESH_ADDRESS = 'DESIGNATE_FRESH_ADDRESS'
 }
 
 // @todo convert to FSA compatible action type
@@ -36,6 +39,7 @@ export const initialState: DeterministicWalletState = {
   completed: false,
   queuedAccounts: [],
   finishedAccounts: [],
+  customDPaths: [],
   errors: []
 };
 
@@ -74,7 +78,8 @@ const DeterministicWalletReducer = (
     case DWActionTypes.GET_ADDRESSES_REQUEST: {
       return {
         ...state,
-        isGettingAccounts: true
+        isGettingAccounts: true,
+        completed: false
       };
     }
     case DWActionTypes.GET_ADDRESSES_SUCCESS: {
@@ -121,6 +126,26 @@ const DeterministicWalletReducer = (
           ...state.finishedAccounts.map((account) => ({ ...account, balance: undefined }))
         ],
         finishedAccounts: []
+      };
+    }
+    case DWActionTypes.ADD_CUSTOM_DPATHS: {
+      const { dpaths } = payload;
+      return {
+        ...state,
+        completed: false,
+        customDPaths: [...state.customDPaths, ...dpaths]
+      };
+    }
+    case DWActionTypes.DESIGNATE_FRESH_ADDRESS: {
+      const { address } = payload;
+      const newFinishedAccounts = state.finishedAccounts.map((finishedAccount) => {
+        return isSameAddress(finishedAccount.address, address)
+          ? { ...finishedAccount, isFreshAddress: true }
+          : { ...finishedAccount };
+      });
+      return {
+        ...state,
+        finishedAccounts: newFinishedAccounts
       };
     }
     case DWActionTypes.TRIGGER_COMPLETE: {
