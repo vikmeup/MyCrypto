@@ -542,7 +542,7 @@ const buildAccountTable = (
           truncate={truncate}
           isCopyable={copyable}
         />,
-        <Network key={index} color="#a682ff">
+        <Network key={index} color={account.network.color || '#a682ff'}>
           {account.networkId}
         </Network>,
         <CurrencyContainer

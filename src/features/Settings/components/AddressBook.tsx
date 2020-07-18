@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { Icon, Identicon, Button } from '@mycrypto/ui';
 import isNumber from 'lodash/isNumber';
@@ -18,6 +18,7 @@ import { ExtendedAddressBook, AddressBook as IAddressBook, TUuid } from '@types'
 import { truncate } from '@utils';
 import { COLORS, SPACING, BREAK_POINTS } from '@theme';
 import { translateRaw } from '@translations';
+import { StoreContext, getNetworkById } from '@services/Store';
 
 interface Props {
   addressBook: ExtendedAddressBook[];
@@ -82,6 +83,7 @@ export default function AddressBook({
   updateAddressBooks,
   restoreDeletedAddressBook
 }: Props) {
+  const { networks } = useContext(StoreContext);
   const [deletingIndex, setDeletingIndex] = useState<number>();
   const [undoDeletingIndexes, setUndoDeletingIndexes] = useState<[number, TUuid][]>([]);
   const overlayRows: [number[], [number, TUuid][]] = [
@@ -151,30 +153,39 @@ export default function AddressBook({
     },
     overlayRows: overlayRowsFlat,
     body: displayAddressBook.map(
-      ({ uuid, address, label, network, notes }: ExtendedAddressBook, index) => [
-        <Icon key={0} icon="star" />,
-        <Label key={1}>
-          <SIdenticon address={address} />
-          <SEditableText
+      ({ uuid, address, label, network, notes }: ExtendedAddressBook, index) => {
+        const networkData = getNetworkById(network, networks);
+        const color =
+          networkData && 'color' in networkData && networkData.color
+            ? networkData.color
+            : '#a682ff';
+        return [
+          <Icon key={0} icon="star" />,
+          <Label key={1}>
+            <SIdenticon address={address} />
+            <SEditableText
+              truncate={true}
+              value={label}
+              saveValue={(value) =>
+                updateAddressBooks(uuid, { address, label: value, network, notes })
+              }
+            />
+          </Label>,
+          <EthAddress key={2} address={address} truncate={truncate} isCopyable={true} />,
+          <Network key={3} color={color}>
+            {network}
+          </Network>,
+          <EditableText
+            key={4}
             truncate={true}
-            value={label}
+            value={notes}
             saveValue={(value) =>
-              updateAddressBooks(uuid, { address, label: value, network, notes })
+              updateAddressBooks(uuid, { address, label, network, notes: value })
             }
-          />
-        </Label>,
-        <EthAddress key={2} address={address} truncate={truncate} isCopyable={true} />,
-        <Network key={3} color="#a682ff">
-          {network}
-        </Network>,
-        <EditableText
-          key={4}
-          truncate={true}
-          value={notes}
-          saveValue={(value) => updateAddressBooks(uuid, { address, label, network, notes: value })}
-        />,
-        <DeleteButton key={5} onClick={() => setDeletingIndex(index)} icon="exit" />
-      ]
+          />,
+          <DeleteButton key={5} onClick={() => setDeletingIndex(index)} icon="exit" />
+        ];
+      }
     ),
     config: {
       primaryColumn: translateRaw('ADDRESSBOOK_LABEL'),
