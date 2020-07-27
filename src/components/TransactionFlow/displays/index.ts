@@ -4,3 +4,4 @@ export { default as TransactionDetailsDisplay } from './TransactionDetailsDispla
 export * from './TxIntermediaryDisplay';
 export { default as FromToAccount } from './FromToAccount';
 export { default as SwapFromToDiagram } from './SwapFromToDiagram';
+export { default as RecipientAccount } from './RecipientAccount';
