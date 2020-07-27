@@ -8,10 +8,11 @@ import {
   NewTabLink,
   AssetIcon,
   Account,
-  FixedSizeCollapsibleTable
+  FixedSizeCollapsibleTable,
+  EditableAccountLabel
 } from '@components';
-import { truncate, convertToFiat } from '@utils';
-import { ITxReceipt, ITxStatus, StoreAccount, Asset, Network } from '@types';
+import { convertToFiat } from '@utils';
+import { ITxReceipt, ITxStatus, StoreAccount, Asset, Network, ExtendedAddressBook } from '@types';
 import {
   RatesContext,
   AddressBookContext,
@@ -55,8 +56,8 @@ interface Props {
 interface ITxHistoryEntry
   extends Overwrite<ITxReceipt, { txType: ITxHistoryType; timestamp: number }> {
   network: Network;
-  toLabel: string;
-  fromLabel: string;
+  toAddressBookEntry?: ExtendedAddressBook;
+  fromAddressBookEntry?: ExtendedAddressBook;
 }
 
 interface ITxTypeConfigObj {
@@ -170,7 +171,6 @@ export default function RecentTransactionList({ accountsList, className = '' }: 
   const { getAssetRate } = useContext(RatesContext);
   const { settings } = useContext(SettingsContext);
   const { networks } = useContext(NetworkContext);
-  const noLabel = translateRaw('NO_LABEL');
 
   const accountTxs: ITxHistoryEntry[] = getTxsFromAccount(accountsList).map((tx: ITxReceipt) => {
     const network = networks.find(({ id }) => tx.asset.networkId === id) as Network;
@@ -184,13 +184,8 @@ export default function RecentTransactionList({ accountsList, className = '' }: 
       ...tx,
       timestamp: tx.timestamp || 0,
       txType: deriveTxType(accountsList, tx) || ITxHistoryType.UNKNOWN,
-      toLabel: toAddressBookEntry ? toAddressBookEntry.label : noLabel,
-      fromLabel:
-        tx.from === FAUCET_ADDRESS
-          ? 'MyCrypto Faucet'
-          : fromAddressBookEntry
-          ? fromAddressBookEntry.label
-          : noLabel,
+      toAddressBookEntry,
+      fromAddressBookEntry,
       network
     };
   });
@@ -210,11 +205,22 @@ export default function RecentTransactionList({ accountsList, className = '' }: 
         receiverAddress,
         amount,
         asset,
-        fromLabel,
-        toLabel,
+        fromAddressBookEntry,
+        toAddressBookEntry,
         network,
         txType
       }) => {
+        const editableFromLabel = EditableAccountLabel({
+          addressBookEntry: fromAddressBookEntry,
+          address: from,
+          networkId: network.id
+        });
+        const editableToLabel = EditableAccountLabel({
+          addressBookEntry: toAddressBookEntry,
+          address: receiverAddress || to,
+          networkId: network.id
+        });
+
         return [
           <TransactionLabel
             key={0}
@@ -223,18 +229,22 @@ export default function RecentTransactionList({ accountsList, className = '' }: 
             stage={status}
             date={timestamp}
           />,
-          <Account key={1} title={fromLabel} truncate={truncate} address={from} />,
+          <Account key={1} title={editableFromLabel} truncate={true} address={from} />,
           to && (
-            <Account key={2} title={toLabel} truncate={truncate} address={receiverAddress || to} />
+            <Account
+              key={2}
+              title={editableToLabel}
+              truncate={true}
+              address={receiverAddress || to}
+            />
           ),
           <Amount
             key={3}
             assetValue={`${parseFloat(amount).toFixed(4)} ${asset.ticker}`}
-            fiatValue={`${getFiat(settings).symbol}${convertToFiat(
-              parseFloat(amount),
-              getAssetRate(asset)
-            ).toFixed(2)}
-        `}
+            fiat={{
+              symbol: getFiat(settings).symbol,
+              amount: convertToFiat(parseFloat(amount), getAssetRate(asset)).toFixed(2)
+            }}
           />,
           <NewTabLink
             key={4}

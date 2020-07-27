@@ -1,21 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import translate, { translateRaw } from '@translations';
+import translate from '@translations';
 
 import { COLORS, BREAK_POINTS, SPACING } from '@theme';
-import { truncate } from '@utils';
-import { Typography, Account } from '@components';
-import { StoreAccount } from '@types';
+import { Typography, EditableAccountLabel, Account } from '@components';
+import { NetworkId, TAddress, ExtendedAddressBook } from '@types';
 
 export interface IAddressAndLabel {
-  address: string;
-  label: string | undefined;
+  address: TAddress;
+  addressBookEntry?: ExtendedAddressBook;
 }
 
 interface Props {
-  from: Pick<StoreAccount, 'address' | 'label'>;
-  to: Pick<StoreAccount, 'address' | 'label'>;
+  networkId: NetworkId;
+  fromAccount: IAddressAndLabel;
+  toAccount: IAddressAndLabel;
   displayToAddress?: boolean;
 }
 
@@ -68,9 +68,17 @@ const LabelWrapper = styled.div`
   margin-bottom: 9px;
 `;
 
-export default function FromToAccount({ from, to, displayToAddress = true }: Props) {
-  const noLabel = translateRaw('NO_LABEL');
-
+const FromToAccount = ({ networkId, fromAccount, toAccount, displayToAddress = true }: Props) => {
+  const editableFromAccountLabel = EditableAccountLabel({
+    address: fromAccount.address,
+    addressBookEntry: fromAccount.addressBookEntry,
+    networkId
+  });
+  const editableToAccountLabel = EditableAccountLabel({
+    address: toAccount.address,
+    addressBookEntry: toAccount.addressBookEntry,
+    networkId
+  });
   return (
     <Addresses>
       <AddressContainer>
@@ -78,7 +86,7 @@ export default function FromToAccount({ from, to, displayToAddress = true }: Pro
           <Label value={translate('CONFIRM_TX_FROM')} fontSize="1.13em" />
         </LabelWrapper>
         <AddressWrapper>
-          <Account address={from.address} title={from.label || noLabel} truncate={truncate} />
+          <Account address={fromAccount.address} title={editableFromAccountLabel} truncate={true} />
         </AddressWrapper>
       </AddressContainer>
       {displayToAddress && (
@@ -87,10 +95,12 @@ export default function FromToAccount({ from, to, displayToAddress = true }: Pro
             <Label value={translate('CONFIRM_TX_TO')} fontSize="1.13em" />
           </LabelWrapper>
           <AddressWrapper>
-            <Account address={to.address} title={to.label || noLabel} truncate={truncate} />
+            <Account address={toAccount.address} title={editableToAccountLabel} truncate={true} />
           </AddressWrapper>
         </AddressContainer>
       )}
     </Addresses>
   );
-}
+};
+
+export default FromToAccount;

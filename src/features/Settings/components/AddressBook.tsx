@@ -15,7 +15,6 @@ import {
   FixedSizeCollapsibleTable
 } from '@components';
 import { ExtendedAddressBook, AddressBook as IAddressBook, TUuid } from '@types';
-import { truncate } from '@utils';
 import { COLORS, SPACING, BREAK_POINTS } from '@theme';
 import { translateRaw } from '@translations';
 import { StoreContext, getNetworkById } from '@services/Store';
@@ -169,23 +168,20 @@ export default function AddressBook({
               saveValue={(value) =>
                 updateAddressBooks(uuid, { address, label: value, network, notes })
               }
-            />
-          </Label>,
-          <EthAddress key={2} address={address} truncate={truncate} isCopyable={true} />,
-          <Network key={3} color={color}>
-            {network}
-          </Network>,
-          <EditableText
-            key={4}
-            truncate={true}
-            value={notes}
-            saveValue={(value) =>
-              updateAddressBooks(uuid, { address, label, network, notes: value })
-            }
-          />,
-          <DeleteButton key={5} onClick={() => setDeletingIndex(index)} icon="exit" />
-        ];
-      }
+          />
+        </Label>,
+        <EthAddress key={2} address={address} truncate={true} isCopyable={true} />,
+        <Network key={3} color={color}>
+          {network}
+        </Network>,
+        <EditableText
+          key={4}
+          truncate={true}
+          value={notes}
+          saveValue={(value) => updateAddressBooks(uuid, { address, label, network, notes: value })}
+        />,
+        <DeleteButton key={5} onClick={() => setDeletingIndex(index)} icon="exit" />
+      ]
     ),
     config: {
       primaryColumn: translateRaw('ADDRESSBOOK_LABEL'),

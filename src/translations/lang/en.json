@@ -214,7 +214,7 @@
     "DASHBOARD_ACTIONS_SWAP_ASSETS_TITLE": "Swap Assets",
     "DASHBOARD_TOKENS_TOOLTIP": "Use this area to view detailed information on the tokens in your account(s), scan for new tokens, or add tokens that aren’t on our default list.",
     "DATA": "Data",
-    "DECRYPT_ACCESS": "How would you like to access your assets? ",
+    "DECRYPT_ACCESS": "How would you like to access your assets?",
     "DECRYPT_PROMPT_SELECT_ADDRESS": "Select an Address",
     "DEFIZAP": "Zapper",
     "DEFIZAP_QUESTION_FIVE": "How is the MyCrypto Zapper integration different from the functionality of Zapper.fi?",
@@ -420,6 +420,7 @@
     "MANAGE_MEMBERSHIP": "View Membership",
     "MAX_TX_FEE": "Max TX Fee",
     "MEMBERSHIP": "MyCrypto Membership",
+    "MEMBERSHIP_DROPDOWN_PLACEHOLDER": "Select membership plan",
     "MEMBERSHIP_ACCORDION_FIRST_CONTENT": "The MyCrypto Membership is a monthly subscription that gives you additional features and helps to support MyCrypto’s future developments.",
     "MEMBERSHIP_ACCORDION_FIRST_TITLE": "What is the MyCrypto Membership?",
     "MEMBERSHIP_ACCORDION_FORTH_CONTENT": "As we continue to add features to the MyCrypto Membership, we may adjust the prices. However, if you have an active membership at the time we add new features, you will get access to those new features for no extra cost until your existing membership expires.",
@@ -579,7 +580,8 @@
     "PROTECTED_TX_ERROR_ETH_ONLY": "We currently only allow transaction protection when you are sending ETH. Please ping us at $supportEmail or on $twitter if you disagree with this choice. We may adjust in the future.",
     "PROTECTED_TX_ERROR_LESS_THAN_MIN_AMOUNT": "We currently only allow transaction protection when you are sending more than $5.00. Please ping us at $supportEmail or on $twitter if you disagree with this choice. We may adjust in the future.",
     "PROTECTED_TX_ETHERSCAN_EXTERNAL_LINK": "View comments for this account on $etherscanLink.",
-    "PROTECTED_TX_FEE": "Protected Transaction Fee:",
+    "PROTECTED_TX_PRICE": "Protected TX Price:",
+    "PROTECTED_TX_FEE": "Transaction Fee:",
     "PROTECTED_TX_GET_TX_PROTECTION": "Get Transaction Protection",
     "PROTECTED_TX_GET_TX_PROTECTION_DESC": "Gain valuable information about the recipient address and the ability to undo your transaction within 20 seconds.",
     "PROTECTED_TX_LAST_SENT_TX": "Last Sent Transaction:",
@@ -608,7 +610,7 @@
     "PROTECTED_TX_SCAN_PARTNER_DB_DESC": "We'll let you know if the recipient account is known anywhere.",
     "PROTECTED_TX_SEND_WITH_CONFIDENCE": "Send with Confidence",
     "PROTECTED_TX_THIS_TX_IS_PROTECTED": "This Transaction is Protected!",
-    "PROTECTED_TX_THIS_TX_IS_PROTECTED_DESC": "Review the report for the recipient address to verify that it is safe before sending your funds.",
+    "PROTECTED_TX_THIS_TX_IS_PROTECTED_DESC": "You have purchased Transaction Protection. Review the report for the recipient address to verify that it is safe before sending your funds.",
     "PROTECTED_TX_TIMELINE_COMMENT": "$reporter has the following note about this address: \"$description\"",
     "PROTECTED_TX_TIMELINE_KNOWN_ACCOUNT": "KNOWN ACCOUNT:",
     "PROTECTED_TX_TIMELINE_MALICIOUS": "Malicious: This account has been marked as $tags",
@@ -618,6 +620,7 @@
     "PROTECTED_TX_UNKNOWN_BALANCE": "Unknown balance",
     "PROTECTED_TX_WEB3_WALLET_DESC": "Due to technical limitations, the 20 second cancellation timer is unavailable for transactions using $web3WalletName and other Web 3 providers.",
     "PROTECTED_TX_LAST_TX_DETAILS": "$value $ticker on $timestamp",
+    "PROTECTED_TX_RECEIPT_HEADER": "Protected Transaction: Completed & Paid",
     "PROTOCOLS_EXPLAINER_COMPOUND": "Compound",
     "PROTOCOLS_EXPLAINER_COMPOUND_DESC": "Compound is a protocol that allows you to borrow and lend assets. Lending assets yields returns in the form of an interest rate.",
     "PROTOCOLS_EXPLAINER_KYBER": "Kyber",
@@ -1022,6 +1025,7 @@
     "PROTECTED_TX_TIMELINE_TAGS": "The labels for this address are: $tags",
     "WARNING_TRANSACTION_FEE": "The transaction fee of $fee seems to be greater than the amount you are sending ($amount). It's recommended to use a lower transaction fee unless you need this transaction to be confirmed swiftly.",
     "POWERED_BY": "Powered By",
-    "DPATH_GENERATE_FRESH_ADDRESS_GAP_ERROR": "You cant generate more than $gap fresh accounts. Add some assets to the existing fresh addresses to open up more!"
+    "DPATH_GENERATE_FRESH_ADDRESS_GAP_ERROR": "You cant generate more than $gap fresh accounts. Add some assets to the existing fresh addresses to open up more!",
+    "ZAP_WITHDRAW_TOOLTIP": "Withdrawing from this Zap requires interacting with Uniswap. If you need assistance, please read [How To Withdraw from Unipool](https://support.mycrypto.com/how-to/defi/how-to-withdraw-from-unipool)."
   }
 }

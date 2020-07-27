@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { truncate } from '@utils';
 import { TSymbol, TUuid } from '@types';
 import Currency from './Currency';
 import Account from './Account';
 
+interface StyleProps {
+  paddingLeft?: string;
+}
 interface Props {
   address: string;
   uuid?: TUuid;
@@ -19,13 +21,15 @@ interface Props {
 const SCurrency = styled(Currency)`
   margin-left: 58px;
 `;
+
 // To change the hover behavior on Address, we need it to be a SC.
 // https://www.styled-components.com/docs/advanced#caveat
 const SAddress = styled(Account)``;
 
-const SAccountWrapper = styled('div')`
+const SAccountWrapper = styled.div<StyleProps>`
   display: flex;
   padding: 16px 15px 16px 19px;
+  ${({ paddingLeft }) => paddingLeft && `padding-left: ${paddingLeft};`}
   flex-direction: column;
   & > div {
     line-height: 1.2;
@@ -37,10 +41,18 @@ const SAccountWrapper = styled('div')`
 `;
 
 // Display an address with it's balance
-function AccountSummary({ address, balance, assetSymbol, uuid, label, onClick }: Props) {
+function AccountSummary({
+  address,
+  balance,
+  assetSymbol,
+  uuid,
+  label,
+  onClick,
+  paddingLeft
+}: Props & StyleProps) {
   return (
-    <SAccountWrapper onPointerDown={onClick}>
-      <SAddress title={label} truncate={truncate} address={address} isCopyable={false} />
+    <SAccountWrapper onPointerDown={onClick} paddingLeft={paddingLeft}>
+      <SAddress title={label} truncate={true} address={address} isCopyable={false} />
       {balance && uuid && (
         <SCurrency
           amount={balance}

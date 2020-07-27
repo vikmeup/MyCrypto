@@ -72,7 +72,6 @@ interface PendingBtnAction {
 interface Props {
   pendingButton?: PendingBtnAction;
   swapDisplay?: SwapDisplayData;
-  protectTxButton?(): JSX.Element;
 }
 
 const SImg = styled('img')`
@@ -88,8 +87,7 @@ export default function TxReceipt({
   pendingButton,
   membershipSelected,
   zapSelected,
-  swapDisplay,
-  protectTxButton
+  swapDisplay
 }: ITxReceiptStepProps & Props) {
   const { getAssetRate } = useContext(RatesContext);
   const { getContactByAddressAndNetworkId } = useContext(AddressBookContext);
@@ -101,9 +99,8 @@ export default function TxReceipt({
   const [blockNumber, setBlockNumber] = useState(0);
   const [timestamp, setTimestamp] = useState(0);
 
-  const {
-    state: { protectTxEnabled, isWeb3Wallet: isPtxWeb3Wallet }
-  } = useContext(ProtectTxContext);
+  // Imported in this way to handle errors where the context is missing, f.x. in Swap Flow
+  const { state: ptxState } = useContext(ProtectTxContext);
 
   useEffect(() => {
     setDisplayTxReceipt(txReceipt);
@@ -197,9 +194,8 @@ export default function TxReceipt({
       resetFlow={resetFlow}
       completeButtonText={completeButtonText}
       pendingButton={pendingButton}
-      protectTxEnabled={protectTxEnabled}
-      web3Wallet={isPtxWeb3Wallet}
-      protectTxButton={protectTxButton}
+      protectTxEnabled={ptxState && ptxState.protectTxEnabled}
+      web3Wallet={ptxState && ptxState.isWeb3Wallet}
     />
   );
 }
@@ -218,9 +214,10 @@ export interface TxReceiptDataProps {
   protectTxEnabled?: boolean;
   web3Wallet?: boolean;
   assetRate(): number | undefined;
-  protectTxButton?(): JSX.Element;
   resetFlow(): void;
 }
+
+type UIProps = Omit<IStepComponentProps, 'resetFlow' | 'onComplete'> & TxReceiptDataProps;
 
 export const TxReceiptUI = ({
   settings,
@@ -241,13 +238,10 @@ export const TxReceiptUI = ({
   resetFlow,
   completeButtonText,
   protectTxEnabled = false,
-  web3Wallet = false,
-  protectTxButton
-}: Omit<IStepComponentProps, 'resetFlow' | 'onComplete'> & TxReceiptDataProps) => {
+  web3Wallet = false
+}: UIProps) => {
   /* Determining User's Contact */
   const { asset, gasPrice, gasLimit, data, nonce, baseAsset, receiverAddress } = txConfig;
-  const recipientLabel = recipientContact ? recipientContact.label : translateRaw('NO_ADDRESS');
-  const senderAccountLabel = senderContact ? senderContact.label : translateRaw('NO_LABEL');
 
   const localTimestamp = new Date(Math.floor(timestamp * 1000)).toLocaleString();
   const assetAmount = useCallback(() => {
@@ -310,13 +304,14 @@ export const TxReceiptUI = ({
       {txType !== ITxType.PURCHASE_MEMBERSHIP && txType !== ITxType.FAUCET && (
         <>
           <FromToAccount
-            from={{
+            networkId={sender.network.id}
+            fromAccount={{
               address: (sender.address || (displayTxReceipt && displayTxReceipt.from)) as TAddress,
-              label: senderAccountLabel
+              addressBookEntry: senderContact
             }}
-            to={{
+            toAccount={{
               address: (receiverAddress || (displayTxReceipt && displayTxReceipt.to)) as TAddress,
-              label: recipientLabel
+              addressBookEntry: recipientContact
             }}
           />
         </>
@@ -374,11 +369,10 @@ export const TxReceiptUI = ({
             <AssetIcon uuid={asset.uuid} size={'24px'} />
             <Amount
               assetValue={`${parseFloat(assetAmount()).toFixed(6)} ${assetTicker()}`}
-              fiatValue={`${getFiat(settings).symbol}${convertToFiat(
-                parseFloat(assetAmount()),
-                assetRate()
-              ).toFixed(2)}
-            `}
+              fiat={{
+                symbol: getFiat(settings).symbol,
+                amount: convertToFiat(parseFloat(assetAmount()), assetRate()).toFixed(2)
+              }}
             />
           </div>
         </div>
@@ -443,8 +437,6 @@ export const TxReceiptUI = ({
             {!displayTxReceipt && <PendingTransaction />}
           </div>
         </div>
-
-        {protectTxButton && protectTxButton()}
 
         {txType !== ITxType.FAUCET && (
           <TransactionDetailsDisplay

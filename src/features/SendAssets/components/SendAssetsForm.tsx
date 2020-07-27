@@ -14,7 +14,7 @@ import translate, { translateRaw } from '@translations';
 import {
   AccountDropdown,
   AmountInput,
-  AssetDropdown,
+  AssetSelector,
   Checkbox,
   ContactLookupField,
   InlineMessage,
@@ -68,7 +68,7 @@ import {
 import { RatesContext } from '@services/RatesProvider';
 import TransactionFeeDisplay from '@components/TransactionFlow/displays/TransactionFeeDisplay';
 import { formatSupportEmail, isFormValid as checkFormValid, ETHUUID, isSameAddress } from '@utils';
-import { ProtectTxUtils } from '@features/ProtectTransaction';
+import { checkFormForProtectTxErrors } from '@features/ProtectTransaction';
 import { ProtectTxShowError } from '@features/ProtectTransaction/components/ProtectTxShowError';
 import { ProtectTxButton } from '@features/ProtectTransaction/components/ProtectTxButton';
 import { ProtectTxContext } from '@features/ProtectTransaction/ProtectTxProvider';
@@ -164,7 +164,7 @@ const QueryWarning: React.FC = () => (
 );
 
 const SendAssetsForm = ({ txConfig, onComplete }: IStepComponentProps) => {
-  const { accounts, userAssets, networks, getAccount } = useContext(StoreContext);
+  const { accounts, userAssets, networks, getAccount, isMyCryptoMember } = useContext(StoreContext);
   const { getAssetRate, getRate } = useContext(RatesContext);
   const { settings } = useContext(SettingsContext);
   const [isEstimatingGasLimit, setIsEstimatingGasLimit] = useState(false); // Used to indicate that interface is currently estimating gas.
@@ -462,7 +462,7 @@ const SendAssetsForm = ({ txConfig, onComplete }: IStepComponentProps) => {
                 <Field
                   name="asset" // Need a way to spread option, name, symbol on sharedConfig for assets
                   component={({ field, form }: FieldProps) => (
-                    <AssetDropdown
+                    <AssetSelector
                       selectedAsset={field.value}
                       assets={userAssets}
                       onSelect={(option: StoreAsset) => {
@@ -505,7 +505,7 @@ const SendAssetsForm = ({ txConfig, onComplete }: IStepComponentProps) => {
                         name={field.name}
                         value={field.value}
                         accounts={accountsWithAsset}
-                        onSelect={(option: IAccount) => {
+                        onSelect={(option: StoreAccount) => {
                           form.setFieldValue('account', option); //if this gets deleted, it no longer shows as selected on interface, would like to set only object keys that are needed instead of full object
                           handleNonceEstimate(option);
                           handleGasEstimate();
@@ -726,6 +726,7 @@ const SendAssetsForm = ({ txConfig, onComplete }: IStepComponentProps) => {
 
               {protectTxFeatureFlag && (
                 <ProtectTxButton
+                  reviewReport={ptxState.protectTxEnabled}
                   onClick={(e) => {
                     e.preventDefault();
 
@@ -758,9 +759,10 @@ const SendAssetsForm = ({ txConfig, onComplete }: IStepComponentProps) => {
 
               {protectTxFeatureFlag && (
                 <ProtectTxShowError
-                  protectTxError={ProtectTxUtils.checkFormForProtectedTxErrors(
+                  protectTxError={checkFormForProtectTxErrors(
                     values,
-                    getAssetRate(values.asset)
+                    getAssetRate(values.asset),
+                    isMyCryptoMember
                   )}
                   shown={
                     !(isEstimatingGasLimit || isResolvingName || isEstimatingNonce || !isFormValid)
