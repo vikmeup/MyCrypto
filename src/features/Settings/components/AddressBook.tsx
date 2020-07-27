@@ -168,20 +168,23 @@ export default function AddressBook({
               saveValue={(value) =>
                 updateAddressBooks(uuid, { address, label: value, network, notes })
               }
-          />
-        </Label>,
-        <EthAddress key={2} address={address} truncate={true} isCopyable={true} />,
-        <Network key={3} color={color}>
-          {network}
-        </Network>,
-        <EditableText
-          key={4}
-          truncate={true}
-          value={notes}
-          saveValue={(value) => updateAddressBooks(uuid, { address, label, network, notes: value })}
-        />,
-        <DeleteButton key={5} onClick={() => setDeletingIndex(index)} icon="exit" />
-      ]
+            />
+          </Label>,
+          <EthAddress key={2} address={address} truncate={true} isCopyable={true} />,
+          <Network key={3} color={color}>
+            {network}
+          </Network>,
+          <EditableText
+            key={4}
+            truncate={true}
+            value={notes}
+            saveValue={(value) =>
+              updateAddressBooks(uuid, { address, label, network, notes: value })
+            }
+          />,
+          <DeleteButton key={5} onClick={() => setDeletingIndex(index)} icon="exit" />
+        ];
+      }
     ),
     config: {
       primaryColumn: translateRaw('ADDRESSBOOK_LABEL'),

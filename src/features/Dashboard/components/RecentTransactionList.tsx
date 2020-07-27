@@ -29,7 +29,6 @@ import {
 } from '@services/Store/helpers';
 import { COLORS } from '@theme';
 import { getFiat } from '@config/fiats';
-import { FAUCET_ADDRESS } from '@config/constants';
 
 import NoTransactions from './NoTransactions';
 import TransactionLabel from './TransactionLabel';

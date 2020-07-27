@@ -52,12 +52,7 @@ import { makeFinishedTxReceipt } from '@utils/transaction';
 
 import { ISender } from './types';
 import { constructSenderFromTxConfig } from './helpers';
-import {
-  FromToAccount,
-  SwapFromToDiagram,
-  TransactionDetailsDisplay,
-  RecipientAccount
-} from './displays';
+import { FromToAccount, SwapFromToDiagram, TransactionDetailsDisplay } from './displays';
 import TxIntermediaryDisplay from './displays/TxIntermediaryDisplay';
 import { PendingTransaction } from './PendingLoader';
 
@@ -301,7 +296,7 @@ export const TxReceiptUI = ({
           <MembershipReceiptBanner membershipSelected={membershipSelected} />
         </div>
       )}
-      {txType !== ITxType.PURCHASE_MEMBERSHIP && txType !== ITxType.FAUCET && (
+      {txType !== ITxType.PURCHASE_MEMBERSHIP && (
         <>
           <FromToAccount
             networkId={sender.network.id}
@@ -312,16 +307,6 @@ export const TxReceiptUI = ({
             toAccount={{
               address: (receiverAddress || (displayTxReceipt && displayTxReceipt.to)) as TAddress,
               addressBookEntry: recipientContact
-            }}
-          />
-        </>
-      )}
-      {txType === ITxType.FAUCET && (
-        <>
-          <RecipientAccount
-            to={{
-              address: (receiverAddress || (displayTxReceipt && displayTxReceipt.to)) as TAddress,
-              label: recipientLabel
             }}
           />
         </>
