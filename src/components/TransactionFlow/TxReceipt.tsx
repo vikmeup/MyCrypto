@@ -31,7 +31,13 @@ import {
   PoweredByText,
   NewTabLink
 } from '@components';
-import { AddressBookContext, AccountContext, StoreContext, SettingsContext } from '@services/Store';
+import {
+  AddressBookContext,
+  AccountContext,
+  StoreContext,
+  SettingsContext,
+  getStoreAccount
+} from '@services/Store';
 import { RatesContext } from '@services/RatesProvider';
 import {
   ProviderHandler,
@@ -134,7 +140,17 @@ export default function TxReceipt({
       const provider = new ProviderHandler(txConfig.network);
       const timestampInterval = setInterval(() => {
         getTimestampFromBlockNum(blockNumber, provider).then((transactionTimestamp) => {
-          if (sender.account) {
+          if (txReceipt.txType === ITxType.FAUCET) {
+            const recipientAccount = getStoreAccount(accounts)(txReceipt.to, txConfig.network.id);
+            if (recipientAccount) {
+              addNewTxToAccount(recipientAccount, {
+                ...displayTxReceipt,
+                blockNumber: blockNumber || 0,
+                timestamp: transactionTimestamp || 0,
+                status: txStatus
+              });
+            }
+          } else if (sender.account) {
             addNewTxToAccount(sender.account, {
               ...displayTxReceipt,
               blockNumber: blockNumber || 0,
