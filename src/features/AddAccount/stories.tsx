@@ -85,6 +85,10 @@ export const getStories = (): IStory[] => [
     isDisabled: IS_WEB_AND_PRODUCTION
   },
   {
+    name: WalletId.DESKTOP_SIGNER,
+    steps: [NetworkSelectPanel, MnemonicUnlock]
+  },
+  {
     name: WalletId.VIEW_ONLY,
     steps: [NetworkSelectPanel, ViewOnlyDecrypt]
   }
