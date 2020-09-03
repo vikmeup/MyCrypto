@@ -7,6 +7,7 @@ import { default as SignTransactionMnemonic } from './Mnemonic';
 import { default as SignTransactionPrivateKey } from './PrivateKey';
 import { default as SignTransactionTrezor } from './Trezor';
 import { default as SignTransactionWalletConnect } from './WalletConnect';
+import { default as SignTransactionDesktopSigner } from './DesktopSigner';
 
 export const WALLET_STEPS: SigningComponents = {
   [WalletId.PRIVATE_KEY]: SignTransactionPrivateKey,
@@ -23,6 +24,7 @@ export const WALLET_STEPS: SigningComponents = {
   [WalletId.MNEMONIC_PHRASE]: SignTransactionMnemonic,
   [WalletId.MNEMONIC_PHRASE_NEW]: SignTransactionMnemonic,
   [WalletId.WALLETCONNECT]: SignTransactionWalletConnect,
+  [WalletId.DESKTOP_SIGNER]: SignTransactionDesktopSigner,
   [WalletId.VIEW_ONLY]: null
 };
 export { default as HardwareSignTransaction } from './Hardware';
