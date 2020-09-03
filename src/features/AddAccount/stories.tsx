@@ -13,7 +13,8 @@ import {
   WalletConnectDecrypt,
   LedgerDecrypt,
   TrezorUnlock,
-  MnemonicUnlock
+  MnemonicUnlock,
+  DesktopSignerUnlock
 } from '@components';
 import { withWalletConnect } from '@services/WalletService';
 
@@ -86,7 +87,7 @@ export const getStories = (): IStory[] => [
   },
   {
     name: WalletId.DESKTOP_SIGNER,
-    steps: [NetworkSelectPanel, MnemonicUnlock]
+    steps: [NetworkSelectPanel, DesktopSignerUnlock]
   },
   {
     name: WalletId.VIEW_ONLY,

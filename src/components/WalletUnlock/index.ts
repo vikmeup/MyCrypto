@@ -13,3 +13,4 @@ export { default as LedgerDecrypt } from './Ledger';
 export { default as DeterministicAccountList } from './DeterministicAccountList';
 export { default as TrezorUnlock } from './NewTrezor';
 export { default as MnemonicUnlock } from './NewMnemonic';
+export { default as DesktopSignerUnlock } from './DesktopSigner';
